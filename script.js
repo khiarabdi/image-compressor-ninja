@@ -1,4 +1,3 @@
-// Ambil elemen
 const range       = document.getElementById("qualityRange");
 const number      = document.getElementById("qualityNumber");
 const toggleBtn   = document.getElementById("toggle-theme");
@@ -14,108 +13,91 @@ const resetBtn    = document.getElementById("reset-btn");
 const dropZone    = document.getElementById("drop-zone");
 const fileChipsEl = document.getElementById("file-chips");
 
-// simpan file-file yang dipilih
 let files = [];
-let currentFile = null;
+let currentIndex = null;
 
-// cegah browser buka file di tab baru saat drag & drop ke window
+// cegah browser buka file di tab
 ["dragover", "drop"].forEach(eventName => {
-  window.addEventListener(eventName, (e) => {
-    e.preventDefault();
-  });
+  window.addEventListener(eventName, (e) => e.preventDefault());
 });
 
-/* === FILE PICKER & DRAG DROP === */
+/* ========== FILE INPUT & DROP ========== */
 
-// klik tombol -> open dialog
-chooseBtn.addEventListener("click", () => {
-  uploadInput.click();
-});
+chooseBtn.addEventListener("click", () => uploadInput.click());
 
-// pilih file via dialog
 uploadInput.addEventListener("change", () => {
-  if (!uploadInput.files.length) return;
-
   const newFiles = Array.from(uploadInput.files).filter(f => f.type.startsWith("image/"));
-  if (!newFiles.length) {
-    alert("Harap pilih file gambar (jpg/png/dll).");
-    return;
-  }
-
   addFiles(newFiles);
 });
 
-// drag over area
 dropZone.addEventListener("dragover", (e) => {
   e.preventDefault();
   dropZone.classList.add("dragover");
 });
 
-// keluar dari area
-dropZone.addEventListener("dragleave", (e) => {
-  e.preventDefault();
+dropZone.addEventListener("dragleave", () => {
   dropZone.classList.remove("dragover");
 });
 
-// drop file ke area
 dropZone.addEventListener("drop", (e) => {
   e.preventDefault();
   dropZone.classList.remove("dragover");
 
-  const dropped = e.dataTransfer.files;
-  if (!dropped || !dropped.length) return;
-
-  const newFiles = Array.from(dropped).filter(f => f.type.startsWith("image/"));
-  if (!newFiles.length) {
-    alert("Harap drop file gambar (jpg/png/dll).");
-    return;
-  }
-
+  const newFiles = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/"));
   addFiles(newFiles);
 });
 
-// tambahkan file ke list + update tampilan
+/* ========== ADD FILES ========== */
+
 function addFiles(newFiles) {
-  // tambahkan ke array
-  newFiles.forEach(f => files.push(f));
+  if (!newFiles.length) {
+    alert("Harap masukkan file gambar (jpg/png/webp dll)");
+    return;
+  }
 
-  // file aktif = yang terakhir di-add
-  currentFile = files[files.length - 1];
+  files = [...files, ...newFiles];
+  currentIndex = files.length - 1; // terakhir jadi aktif
 
-  // render chips
   renderFileChips();
 
-  // ringkasan
   if (files.length === 1) {
     fileNameEl.textContent = files[0].name;
   } else {
-    fileNameEl.textContent = `${files.length} file dipilih (terakhir: ${currentFile.name})`;
+    fileNameEl.textContent = `${files.length} file terpilih (aktif: ${files[currentIndex].name})`;
   }
 
-  // sembunyikan dropzone, tampilkan list
   dropZone.classList.add("hidden");
   fileChipsEl.classList.remove("hidden");
 }
 
-// tampilkan list nama file sebagai chip
+/* ========== FILE LIST / CHIPS ========== */
+
 function renderFileChips() {
   fileChipsEl.innerHTML = "";
 
   files.forEach((file, index) => {
     const chip = document.createElement("div");
     chip.className = "file-chip";
+    chip.textContent = file.name;
 
-    // tandai yang aktif (terakhir)
-    if (index === files.length - 1) {
+    if (index === currentIndex) {
       chip.style.borderColor = "#00c853";
+      chip.style.fontWeight = "bold";
     }
 
-    chip.textContent = file.name;
+    // klik chip = pilih file aktif
+    chip.onclick = () => {
+      currentIndex = index;
+      fileNameEl.textContent = `${files.length} file terpilih (aktif: ${file.name})`;
+      renderFileChips();
+    };
+
     fileChipsEl.appendChild(chip);
   });
 }
 
-/* === SLIDER BACKGROUND === */
+/* ========== SLIDER ========== */
+
 function updateSliderBackground() {
   const min = parseFloat(range.min) || 0;
   const max = parseFloat(range.max) || 1;
@@ -132,85 +114,121 @@ function updateSliderBackground() {
     ${baseColor} 100%)`;
 }
 
-// slider -> number
 range.addEventListener("input", () => {
   number.value = range.value;
   updateSliderBackground();
 });
 
-// number -> slider
 number.addEventListener("input", () => {
-  const val = parseFloat(number.value);
-  if (val >= 0.1 && val <= 1) {
-    range.value = val;
+  if (number.value >= 0.1 && number.value <= 1) {
+    range.value = number.value;
     updateSliderBackground();
   }
 });
 
-/* === UTIL FORMAT SIZE === */
+/* ========== SIZE FORMAT ========== */
+
 function formatSize(bytes) {
   if (bytes < 1024) return bytes + " B";
   if (bytes < 1048576) return (bytes / 1024).toFixed(2) + " KB";
   return (bytes / 1048576).toFixed(2) + " MB";
 }
 
-/* === KOMPRES === */
-function compress() {
-  const file = currentFile;
-  if (!file) {
+/* ========== COMPRESS SINGLE ========== */
+
+function compressSingle(file) {
+  return new Promise((resolve) => {
+    const quality = parseFloat(range.value);
+
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.src = e.target.result;
+
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob);
+          resolve({ blob, url, name: file.name });
+        }, "image/jpeg", quality);
+      };
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ========== COMPRESS BUTTON ========== */
+
+async function compress() {
+  if (!files.length) {
     alert("Silakan pilih atau drop gambar terlebih dahulu.");
     return;
   }
 
-  const quality = parseFloat(range.value);
-  beforeSize.textContent = formatSize(file.size);
+  // 👉 kalau cuma 1 file
+  if (files.length === 1) {
+    const file = files[0];
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const img = new Image();
-    img.src = e.target.result;
+    beforeSize.textContent = formatSize(file.size);
 
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
+    const { blob, url } = await compressSingle(file);
 
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0);
+    afterSize.textContent = formatSize(blob.size);
 
-      canvas.toBlob(
-        (blob) => {
-          const url = URL.createObjectURL(blob);
+    preview.src = url;
+    preview.style.display = "block";
 
-          afterSize.textContent = formatSize(blob.size);
+    downloadEl.href = url;
+    downloadEl.download = "compressed_" + file.name;
+    downloadEl.classList.remove("hidden");
 
-          preview.src = url;
-          preview.style.display = "block";
+    return;
+  }
 
-          downloadEl.href = url;
-          downloadEl.download = "compressed.jpg";
-          downloadEl.classList.remove("hidden");
-        },
-        "image/jpeg",
-        quality
-      );
-    };
-  };
-  reader.readAsDataURL(file);
+  // 👉 MULTI FILE MODE
+  alert("Banyak file terdeteksi. Akan dikompres & didownload satu per satu.");
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+
+    beforeSize.textContent = formatSize(file.size);
+
+    const { blob, url, name } = await compressSingle(file);
+
+    afterSize.textContent = formatSize(blob.size);
+
+    // auto-download
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "compressed_" + name;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    await new Promise(r => setTimeout(r, 600)); // delay biar ga spam browser
+  }
+
+  alert("Semua file berhasil dikompres!");
 }
 
-/* === RESET === */
+/* ========== RESET ========== */
+
 function resetAll() {
   files = [];
-  currentFile = null;
+  currentIndex = null;
 
   uploadInput.value = "";
   fileNameEl.textContent = "No file chosen";
-
-  // tampilkan lagi dropzone, sembunyikan list
-  dropZone.classList.remove("hidden");
-  fileChipsEl.classList.add("hidden");
   fileChipsEl.innerHTML = "";
+  fileChipsEl.classList.add("hidden");
+
+  dropZone.classList.remove("hidden");
 
   preview.style.display = "none";
   preview.src = "";
@@ -226,7 +244,8 @@ function resetAll() {
   updateSliderBackground();
 }
 
-/* === DARK / LIGHT MODE === */
+/* ========== TOGGLE MODE ========== */
+
 toggleBtn.addEventListener("click", () => {
   document.body.classList.toggle("light");
   document.body.classList.toggle("dark");
@@ -238,9 +257,9 @@ toggleBtn.addEventListener("click", () => {
   updateSliderBackground();
 });
 
-/* === EVENT TOMBOL === */
+/* ========== EVENTS ========== */
+
 compressBtn.addEventListener("click", compress);
 resetBtn.addEventListener("click", resetAll);
 
-/* INIT */
 updateSliderBackground();
