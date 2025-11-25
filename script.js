@@ -26,8 +26,8 @@ const resultTitle = document.getElementById("result-title");
 
 let files = [];
 let currentLang = "id";
-let compressedResults = [];     // semua hasil kompres disimpan di sini
-let previewContainer = null;   // container thumbnail preview
+let compressedResults = [];     // semua hasil kompres
+let previewContainer = null;   // container thumbnail
 
 /* ======= i18n TEXTS ======= */
 const i18n = {
@@ -43,7 +43,7 @@ const i18n = {
     resultTitle: "Hasil Kompres:",
     compress: "Kompres",
     reset: "Reset",
-    download: "Download Semua File",
+    download: "Download semua file",
     noFile: "Belum ada file",
     alertNoImage: "Harap masukkan gambar terlebih dahulu (jpg/png/dll).",
     alertDoneMulti: "Semua file berhasil dikompres!"
@@ -60,7 +60,7 @@ const i18n = {
     resultTitle: "Compression Result:",
     compress: "Compress",
     reset: "Reset",
-    download: "Download All File",
+    download: "Download all files",
     noFile: "No file chosen",
     alertNoImage: "Please add image files first (jpg/png/etc).",
     alertDoneMulti: "All files have been compressed!"
@@ -187,7 +187,6 @@ function formatSize(bytes) {
 }
 
 /* ======= COMPRESS LOGIC ======= */
-/* ======= COMPRESS LOGIC ======= */
 compressBtn.onclick = async () => {
   if (!files.length) {
     alert(i18n[currentLang].alertNoImage);
@@ -210,9 +209,9 @@ compressBtn.onclick = async () => {
   preview.src = "";
   previewContainer.innerHTML = "";
 
-  // sembunyikan dulu tombol download all
   downloadEl.classList.add("hidden");
   downloadEl.removeAttribute("href");
+  downloadEl.removeAttribute("download");
 
   for (const file of files) {
     const { blob, url } = await compressSingle(file);
@@ -227,15 +226,13 @@ compressBtn.onclick = async () => {
     // simpan untuk tombol download all
     compressedResults.push({ name: file.name, url });
 
-    /* ==============================
-       PREVIEW + DOWNLOAD PER FILE
-    ============================== */
-
+    // PREVIEW + DOWNLOAD PER FILE
     const wrapper = document.createElement("div");
     wrapper.className = "preview-item";
 
     const img = document.createElement("img");
     img.src = url;
+    img.alt = file.name;
     img.className = "preview-thumb";
 
     const btn = document.createElement("a");
@@ -248,7 +245,7 @@ compressBtn.onclick = async () => {
     wrapper.appendChild(btn);
     previewContainer.appendChild(wrapper);
 
-    await new Promise(r => setTimeout(r, 200));
+    await new Promise(r => setTimeout(r, 150));
   }
 
   // tampilkan tombol download all jika ada hasil
@@ -257,6 +254,7 @@ compressBtn.onclick = async () => {
     downloadEl.href = "#";
   }
 
+  // nggak ada alert "berhasil dikompres"
 };
 
 function compressSingle(file) {
@@ -300,7 +298,6 @@ downloadEl.addEventListener("click", (e) => {
     document.body.removeChild(a);
   });
 });
-
 
 /* ======= RESET ======= */
 resetBtn.onclick = () => {

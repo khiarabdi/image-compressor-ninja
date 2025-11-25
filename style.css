@@ -240,13 +240,13 @@ input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
   height: 8px;
-  background: rgba(0,123,255,0.3); /* bukan abu2 polos */
+  background: rgba(0,123,255,0.35);  /* agak biru */
   border-radius: 100px;
   outline: none;
 }
 
 body.light input[type="range"] {
-  background: rgba(0,123,255,0.4);
+  background: rgba(0,123,255,0.45);
 }
 
 input[type="range"]::-webkit-slider-thumb {
@@ -327,72 +327,15 @@ button {
   margin-bottom: 6px;
 }
 
+/* img lama disembunyiin, dipakai anchor */
 #preview {
-  max-width: 140px; /* kecil */
+  max-width: 140px;
   width: 140px;
   display: none;
   border-radius: 10px;
 }
 
-/* CONTAINER PREVIEW BANYAK GAMBAR */
-#preview-container {
-  margin-top: 10px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  justify-content: center;
-}
-
-/* WRAPPER TIAP GAMBAR + TOMBOL */
-.preview-item {
-  display: flex;
-  flex-direction: column;   /* <-- BIKIN VERTIKAL (gambar di atas, tombol di bawah) */
-  align-items: center;
-  gap: 6px;
-}
-
-/* THUMBNAIL GAMBAR */
-.preview-thumb {
-  width: 90px;
-  height: 90px;
-  object-fit: cover;
-  border-radius: 14px;
-  background: #ffffff;
-  padding: 6px;                    /* biar kayak ada frame putih */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-}
-
-/* TOMBOL DOWNLOAD 1-1 */
-.download-single {
-  display: inline-block;           /* biar dianggap kotak */
-  padding: 6px 14px;
-  border-radius: 999px;            /* bulat */
-  background: #ffffff;             /* putih */
-  color: #111;
-  font-size: 12px;
-  font-weight: 600;
-  text-decoration: none;           /* hilang underline biru */
-  border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.download-single:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 3px 8px rgba(0,0,0,0.35);
-}
-
-/* versi light mode, biar kontras tetap oke */
-body.light .preview-thumb {
-  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
-}
-
-body.light .download-single {
-  border-color: rgba(0,0,0,0.15);
-}
-
-
-/* DOWNLOAD */
+/* DOWNLOAD ALL BUTTON */
 .download-wrapper {
   margin-top: 12px;
   display: flex;
@@ -405,6 +348,60 @@ body.light .download-single {
   border-radius: 999px;
   color: white;
   text-decoration: none;
+}
+
+/* PREVIEW GRID + DOWNLOAD PER FILE */
+#preview-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.preview-thumb {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 6px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+}
+
+body.light .preview-thumb {
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+/* tombol download per file */
+.download-single {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #111;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.download-single:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+}
+
+body.light .download-single {
+  border-color: rgba(0,0,0,0.15);
 }
 
 /* FOOTER */
