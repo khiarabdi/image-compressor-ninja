@@ -416,3 +416,97 @@ body.light .download-single {
 .footer a {
   color: #4fc3ff;
 }
+
+/* ===========================
+   RESPONSIVE MOBILE
+   =========================== */
+@media (max-width: 600px) {
+
+  body {
+    align-items: stretch;
+    padding: 0;
+  }
+
+  .page-header {
+    max-width: 100%;
+    padding: 14px 14px 6px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .brand-text h1 {
+    font-size: 18px;
+  }
+
+  .brand-text p {
+    font-size: 12px;
+  }
+
+  .header-controls {
+    align-items: flex-start;
+  }
+
+  .card {
+    max-width: 100%;
+    border-radius: 18px 18px 0 0;
+    margin: 6px 0 0;
+    padding: 16px 14px 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.45);
+  }
+
+  /* file area & teks lebih kecil */
+  .drop-zone {
+    padding: 14px 10px;
+  }
+
+  #file-name {
+    font-size: 12px;
+  }
+
+  /* tombol dibuat full-width biar enak di jempol */
+  .footer-btn {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #compress-btn,
+  #reset-btn {
+    width: 100%;
+  }
+
+  .download-wrapper {
+    margin-top: 10px;
+  }
+
+  .download-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* preview grid biar agak rapat */
+  #preview-container {
+    gap: 10px;
+  }
+
+  .preview-item {
+    gap: 4px;
+  }
+
+  .preview-thumb {
+    width: 80px;
+    height: 80px;
+    padding: 4px;
+  }
+
+  .download-single {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  /* footer teks kecil */
+  .footer {
+    font-size: 11px;
+    padding-top: 8px;
+  }
+}
