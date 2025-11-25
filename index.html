@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Compressor</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="dark">
+
+<div class="card">
+  <button id="toggle-theme">Light Mode</button>
+
+  <div class="title-wrapper">
+    <img src="logo.png" class="logo" alt="Logo">
+    <div>
+      <h2>Image Compressor Sederhana</h2>
+      <div class="subtitle">
+        Upload gambar, atur kualitas, lalu kompres & download.
+      </div>
+    </div>
+  </div>
+
+  <div class="controls">
+
+    <!-- PILIH FILE -->
+    <div class="file-box">
+      <p class="center-title">Pilih Gambar</p>
+
+      <input type="file" id="upload" accept="image/*" hidden>
+
+      <button id="choose-btn" type="button">Choose File</button>
+
+      <p id="file-name">No file chosen</p>
+    </div>
+
+    <!-- KUALITAS -->
+    <div class="quality-box">
+      <div class="quality-top">
+        <label for="qualityRange">Kualitas</label>
+        <input
+          type="number"
+          id="qualityNumber"
+          min="0.1"
+          max="1"
+          step="0.1"
+          value="0.8"
+        >
+      </div>
+
+      <input
+        type="range"
+        min="0.1"
+        max="1"
+        step="0.1"
+        value="0.8"
+        id="qualityRange"
+      >
+    </div>
+
+    <!-- INFO UKURAN -->
+    <div class="info-box">
+      <p>Ukuran sebelum: <span id="beforeSize">-</span></p>
+      <p>Ukuran sesudah: <span id="afterSize">-</span></p>
+    </div>
+
+    <!-- TOMBOL -->
+    <div class="footer-btn">
+      <button id="compress-btn" type="button">Kompres</button>
+      <button id="reset-btn" type="button">Reset</button>
+    </div>
+
+  </div>
+
+  <h3>Hasil Kompres:</h3>
+  <img id="preview">
+
+  <div class="download-wrapper">
+    <a id="download" class="download-btn hidden">Download File</a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Created by: <b>Osep Cino</b>, <b>Abdi Ninja</b>, <b>Okan Kunci T</b></p>
+    <p>
+      ☕ Support us:
+      <a href="https://saweria.co/yhendraji95" target="_blank">
+        https://saweria.co/yhendraji95
+      </a>
+    </p>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
