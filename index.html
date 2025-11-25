@@ -23,15 +23,19 @@
 
   <div class="controls">
 
-    <!-- PILIH FILE -->
+    <!-- PILIH FILE + DRAG & DROP -->
     <div class="file-box">
       <p class="center-title">Pilih Gambar</p>
 
-      <input type="file" id="upload" accept="image/*" hidden>
-
-      <button id="choose-btn" type="button">Choose File</button>
+      <div id="drop-zone" class="drop-zone">
+        <p class="drop-text">Drag & drop gambar ke sini<br>atau</p>
+        <button id="choose-btn" type="button">Choose File</button>
+      </div>
 
       <p id="file-name">No file chosen</p>
+
+      <!-- input asli disembunyikan -->
+      <input type="file" id="upload" accept="image/*" hidden>
     </div>
 
     <!-- KUALITAS -->
