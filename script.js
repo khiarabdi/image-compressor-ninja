@@ -12,65 +12,108 @@ const chooseBtn   = document.getElementById("choose-btn");
 const compressBtn = document.getElementById("compress-btn");
 const resetBtn    = document.getElementById("reset-btn");
 const dropZone    = document.getElementById("drop-zone");
+const fileChipsEl = document.getElementById("file-chips");
 
-// Cegah browser buka file saat drag & drop di luar drop-zone
+// simpan file-file yang dipilih
+let files = [];
+let currentFile = null;
+
+// cegah browser buka file di tab baru saat drag & drop ke window
 ["dragover", "drop"].forEach(eventName => {
   window.addEventListener(eventName, (e) => {
     e.preventDefault();
   });
 });
 
-
-// file yang sedang dipakai (pilih / drag-drop)
-let currentFile = null;
-
 /* === FILE PICKER & DRAG DROP === */
 
-// klik tombol -> buka dialog file
+// klik tombol -> open dialog
 chooseBtn.addEventListener("click", () => {
   uploadInput.click();
 });
 
-// saat pilih file biasa
+// pilih file via dialog
 uploadInput.addEventListener("change", () => {
-  if (uploadInput.files.length > 0) {
-    currentFile = uploadInput.files[0];
-    fileNameEl.textContent = currentFile.name;
-  } else {
-    currentFile = null;
-    fileNameEl.textContent = "No file chosen";
+  if (!uploadInput.files.length) return;
+
+  const newFiles = Array.from(uploadInput.files).filter(f => f.type.startsWith("image/"));
+  if (!newFiles.length) {
+    alert("Harap pilih file gambar (jpg/png/dll).");
+    return;
   }
+
+  addFiles(newFiles);
 });
 
-// drag over
+// drag over area
 dropZone.addEventListener("dragover", (e) => {
   e.preventDefault();
   dropZone.classList.add("dragover");
 });
 
-// drag leave
+// keluar dari area
 dropZone.addEventListener("dragleave", (e) => {
   e.preventDefault();
   dropZone.classList.remove("dragover");
 });
 
-// drop file
+// drop file ke area
 dropZone.addEventListener("drop", (e) => {
   e.preventDefault();
   dropZone.classList.remove("dragover");
 
-  const files = e.dataTransfer.files;
-  if (!files || !files.length) return;
+  const dropped = e.dataTransfer.files;
+  if (!dropped || !dropped.length) return;
 
-  const file = files[0];
-  if (!file.type.startsWith("image/")) {
+  const newFiles = Array.from(dropped).filter(f => f.type.startsWith("image/"));
+  if (!newFiles.length) {
     alert("Harap drop file gambar (jpg/png/dll).");
     return;
   }
 
-  currentFile = file;
-  fileNameEl.textContent = file.name;
+  addFiles(newFiles);
 });
+
+// tambahkan file ke list + update tampilan
+function addFiles(newFiles) {
+  // tambahkan ke array
+  newFiles.forEach(f => files.push(f));
+
+  // file aktif = yang terakhir di-add
+  currentFile = files[files.length - 1];
+
+  // render chips
+  renderFileChips();
+
+  // ringkasan
+  if (files.length === 1) {
+    fileNameEl.textContent = files[0].name;
+  } else {
+    fileNameEl.textContent = `${files.length} file dipilih (terakhir: ${currentFile.name})`;
+  }
+
+  // sembunyikan dropzone, tampilkan list
+  dropZone.classList.add("hidden");
+  fileChipsEl.classList.remove("hidden");
+}
+
+// tampilkan list nama file sebagai chip
+function renderFileChips() {
+  fileChipsEl.innerHTML = "";
+
+  files.forEach((file, index) => {
+    const chip = document.createElement("div");
+    chip.className = "file-chip";
+
+    // tandai yang aktif (terakhir)
+    if (index === files.length - 1) {
+      chip.style.borderColor = "#00c853";
+    }
+
+    chip.textContent = file.name;
+    fileChipsEl.appendChild(chip);
+  });
+}
 
 /* === SLIDER BACKGROUND === */
 function updateSliderBackground() {
@@ -120,7 +163,6 @@ function compress() {
   }
 
   const quality = parseFloat(range.value);
-
   beforeSize.textContent = formatSize(file.size);
 
   const reader = new FileReader();
@@ -159,9 +201,16 @@ function compress() {
 
 /* === RESET === */
 function resetAll() {
+  files = [];
   currentFile = null;
+
   uploadInput.value = "";
   fileNameEl.textContent = "No file chosen";
+
+  // tampilkan lagi dropzone, sembunyikan list
+  dropZone.classList.remove("hidden");
+  fileChipsEl.classList.add("hidden");
+  fileChipsEl.innerHTML = "";
 
   preview.style.display = "none";
   preview.src = "";

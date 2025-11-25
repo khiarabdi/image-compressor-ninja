@@ -117,9 +117,34 @@ body.light .drop-zone {
   font-size: 14px;
 }
 
-/* NAMA FILE */
-#file-name {
+/* LIST FILE (CHIPS) */
+.file-chips {
   margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: stretch;
+}
+
+.file-chip {
+  background: rgba(0,123,255,0.12);
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  text-align: left;
+  border: 1px solid rgba(0,123,255,0.6);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.light .file-chip {
+  background: rgba(0,123,255,0.08);
+}
+
+/* RINGKASAN FILE */
+#file-name {
+  margin-top: 8px;
   font-size: 13px;
   opacity: 0.8;
 }

@@ -27,15 +27,20 @@
     <div class="file-box">
       <p class="center-title">Pilih Gambar</p>
 
+      <!-- Kotak drag & drop awal -->
       <div id="drop-zone" class="drop-zone">
         <p class="drop-text">Drag & drop gambar ke sini<br>atau</p>
         <button id="choose-btn" type="button">Choose File</button>
       </div>
 
+      <!-- List file (muncul setelah ada file) -->
+      <div id="file-chips" class="file-chips hidden"></div>
+
+      <!-- Ringkasan file -->
       <p id="file-name">No file chosen</p>
 
-      <!-- input asli disembunyikan -->
-      <input type="file" id="upload" accept="image/*" hidden>
+      <!-- input asli disembunyikan, bisa multi-file -->
+      <input type="file" id="upload" accept="image/*" multiple hidden>
     </div>
 
     <!-- KUALITAS -->
