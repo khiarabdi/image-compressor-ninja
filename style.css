@@ -7,7 +7,7 @@ body {
   margin: 0;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
   background: radial-gradient(circle at top, #2b2b2b, #080808);
   color: #f5f5f5;
@@ -18,6 +18,94 @@ body.light {
   color: #222;
 }
 
+/* HEADER ATAS */
+.page-header {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 26px 10px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo-small {
+  height: 50px;
+}
+
+.brand-text h1 {
+  font-size: 20px;
+  margin: 0;
+}
+
+.brand-text p {
+  font-size: 13px;
+  margin: 2px 0 0;
+  opacity: 0.8;
+}
+
+/* HEADER CONTROLS */
+.header-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.lang-toggle {
+  display: inline-flex;
+  background: #fff;
+  border-radius: 999px;
+  padding: 2px;
+}
+
+body.light .lang-toggle {
+  background: #222;
+}
+
+.lang-btn {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  cursor: pointer;
+  background: transparent;
+  color: #222;
+}
+
+body.dark .lang-btn {
+  color: #333;
+}
+
+body.light .lang-btn {
+  color: #f5f5f5;
+}
+
+.lang-btn.active {
+  background: #007bff;
+  color: #fff;
+}
+
+.theme-toggle {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #fff;
+  color: #222;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+body.light .theme-toggle {
+  background: #222;
+  color: #f5f5f5;
+}
+
 /* CARD UTAMA */
 .card {
   position: relative;
@@ -25,41 +113,14 @@ body.light {
   max-width: 500px;
   background: rgba(20,20,20,0.95);
   border-radius: 16px;
-  padding: 24px 22px 28px;
+  padding: 20px 22px 26px;
   box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+  margin-bottom: 30px;
 }
 
 body.light .card {
-  background: white;
-}
-
-/* TOGGLE */
-#toggle-theme {
-  position: absolute;
-  top: 14px;
-  right: 16px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: none;
-  cursor: pointer;
-  font-size: 12px;
-}
-
-/* TITLE */
-.title-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.logo {
-  height: 60px;
-}
-
-.subtitle {
-  font-size: 13px;
-  opacity: 0.8;
+  background: #ffffff;
+  color: #222;
 }
 
 .controls {
@@ -68,7 +129,7 @@ body.light .card {
   gap: 16px;
 }
 
-/* FILE + DRAG DROP */
+/* FILE AREA */
 .file-box {
   text-align: center;
 }
@@ -77,36 +138,28 @@ body.light .card {
   margin-bottom: 8px;
 }
 
+/* DROP ZONE */
 .drop-zone {
-  border: 2px dashed rgba(255,255,255,0.3);
+  border: 2px dashed rgba(255,255,255,0.4);
   border-radius: 14px;
   padding: 18px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: rgba(0,0,0,0.25);
+  text-align: center;
+  margin-bottom: 6px;
   transition: 0.2s;
-}
-
-body.light .drop-zone {
-  border-color: rgba(0,0,0,0.25);
-  background: #f2f2f2;
 }
 
 .drop-zone.dragover {
   border-color: #007bff;
-  background: rgba(0,123,255,0.08);
+  background: rgba(0,123,255,0.1);
 }
 
 .drop-text {
   font-size: 13px;
   opacity: 0.8;
-  margin: 0;
+  margin: 0 0 6px;
 }
 
-/* BUTTON PILIH FILE */
+/* CHOOSE / ADD MORE */
 #choose-btn {
   background: #007bff;
   color: white;
@@ -114,58 +167,51 @@ body.light .drop-zone {
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+}
+
+.add-more {
+  margin-top: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px dashed #007bff;
+  background: transparent;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.hidden {
+  display: none !important;
 }
 
 /* LIST FILE (CHIPS) */
 .file-chips {
-  margin-top: 6px;
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  align-items: stretch;
 }
 
 .file-chip {
-  background: rgba(0,123,255,0.12);
+  background: rgba(0,123,255,0.1);
+  padding: 6px 10px;
   border-radius: 999px;
-  padding: 6px 12px;
+  border: 1px solid #007bff;
   font-size: 13px;
   text-align: left;
-  border: 1px solid rgba(0,123,255,0.6);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-body.light .file-chip {
-  background: rgba(0,123,255,0.08);
-}
-
-/* RINGKASAN FILE */
+/* TEKS FILE SUMMARY */
 #file-name {
   margin-top: 8px;
   font-size: 13px;
   opacity: 0.8;
 }
 
-/* INPUT NUMBER KUALITAS */
-input[type="number"] {
-  width: 70px;
-  padding: 4px 6px;
-  border-radius: 6px;
-  border: 1px solid #555;
-  background: #121212;
-  color: #f5f5f5;
-}
-
-body.light input[type="number"] {
-  background: #fff;
-  color: #222;
-  border-color: #ccc;
-}
-
-/* QUALITY WRAPPER */
+/* KUALITAS */
 .quality-box {
   display: flex;
   flex-direction: column;
@@ -178,45 +224,177 @@ body.light input[type="number"] {
   align-items: center;
 }
 
-/* SIZE INFO */
-.info-box {
-  font-size: 14px;
+/* INPUT NUMBER KUALITAS */
+#qualityNumber {
+  width: 80px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+  color: #222;
+  font-size: 13px;
 }
 
-/* BUTTONS */
+/* RANGE SLIDER */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: rgba(0,123,255,0.3); /* bukan abu2 polos */
+  border-radius: 100px;
+  outline: none;
+}
+
+body.light input[type="range"] {
+  background: rgba(0,123,255,0.4);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  border: none;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #007bff;
+  border: none;
+  cursor: pointer;
+}
+
+/* INFO SIZE */
+.info-box {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.size-list {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.size-item {
+  font-size: 12px;
+  padding: 4px 6px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+}
+
+body.light .size-item {
+  background: rgba(0,0,0,0.05);
+}
+
+/* BUTTON FOOTER */
 .footer-btn {
+  margin-top: 8px;
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 }
 
 button {
-  padding: 8px 16px;
-  border-radius: 20px;
   cursor: pointer;
-  border: none;
 }
 
+/* khusus warna */
 #compress-btn {
   background: #007bff;
   color: white;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
 }
 
 #reset-btn {
   background: #dc3545;
   color: white;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
 }
 
-/* PREVIEW */
+/* HASIL & PREVIEW */
+#result-title {
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+
 #preview {
-  max-width: 100%;
+  max-width: 140px; /* kecil */
+  width: 140px;
   display: none;
-  margin-top: 12px;
   border-radius: 10px;
 }
 
+/* CONTAINER PREVIEW BANYAK GAMBAR */
+#preview-container {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+
+/* WRAPPER TIAP GAMBAR + TOMBOL */
+.preview-item {
+  display: flex;
+  flex-direction: column;   /* <-- BIKIN VERTIKAL (gambar di atas, tombol di bawah) */
+  align-items: center;
+  gap: 6px;
+}
+
+/* THUMBNAIL GAMBAR */
+.preview-thumb {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 6px;                    /* biar kayak ada frame putih */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35);
+}
+
+/* TOMBOL DOWNLOAD 1-1 */
+.download-single {
+  display: inline-block;           /* biar dianggap kotak */
+  padding: 6px 14px;
+  border-radius: 999px;            /* bulat */
+  background: #ffffff;             /* putih */
+  color: #111;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;           /* hilang underline biru */
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.download-single:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+}
+
+/* versi light mode, biar kontras tetap oke */
+body.light .preview-thumb {
+  box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+}
+
+body.light .download-single {
+  border-color: rgba(0,0,0,0.15);
+}
+
+
 /* DOWNLOAD */
 .download-wrapper {
-  margin-top: 10px;
+  margin-top: 12px;
   display: flex;
   justify-content: center;
 }
@@ -227,64 +405,17 @@ button {
   border-radius: 999px;
   color: white;
   text-decoration: none;
-  text-align: center;
-}
-
-.hidden {
-  display: none !important;
 }
 
 /* FOOTER */
 .footer {
-  margin-top: 18px;
+  margin-top: 16px;
   text-align: center;
-  font-size: 13px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-  padding-top: 12px;
+  font-size: 12px;
+  border-top: 1px solid rgba(255,255,255,0.15);
+  padding-top: 10px;
 }
 
 .footer a {
   color: #4fc3ff;
-}
-
-/* SLIDER BULAT + BIRU */
-input[type="range"] {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 8px;
-  background: #2c2c2c;
-  border-radius: 100px;
-  outline: none;
-  margin-top: 6px;
-}
-
-body.light input[type="range"] {
-  background: #ddd;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #007bff;
-  border: none;
-  cursor: pointer;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #007bff;
-  border: none;
-  cursor: pointer;
-}
-
-input[type="range"]::-webkit-slider-runnable-track {
-  border-radius: 100px;
-}
-
-input[type="range"]::-moz-range-track {
-  border-radius: 100px;
 }

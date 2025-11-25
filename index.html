@@ -7,100 +7,108 @@
 </head>
 
 <body class="dark">
-
-<div class="card">
-  <button id="toggle-theme">Light Mode</button>
-
-  <div class="title-wrapper">
-    <img src="logo.png" class="logo" alt="Logo">
-    <div>
-      <h2>Image Compressor Sederhana</h2>
-      <div class="subtitle">
-        Upload gambar, atur kualitas, lalu kompres & download.
+  <!-- HEADER ATAS (LOGO KIRI, BAHASA + THEME KANAN) -->
+  <header class="page-header">
+    <div class="brand">
+      <img src="logo.png" alt="Logo" class="logo-small">
+      <div class="brand-text">
+        <h1 id="title-text">Image Compressor Sederhana</h1>
+        <p id="subtitle-text">Upload gambar, atur kualitas, lalu kompres & download.</p>
       </div>
     </div>
-  </div>
 
-  <div class="controls">
+    <div class="header-controls">
+      <div class="lang-toggle">
+        <button class="lang-btn active" data-lang="id">ID</button>
+        <button class="lang-btn" data-lang="en">EN</button>
+      </div>
+      <button id="toggle-theme" class="theme-toggle">Light Mode</button>
+    </div>
+  </header>
 
-    <!-- PILIH FILE + DRAG & DROP -->
-    <div class="file-box">
-      <p class="center-title">Pilih Gambar</p>
+  <!-- CARD UTAMA -->
+  <div class="card">
+    <div class="controls">
 
-      <!-- Kotak drag & drop awal -->
-      <div id="drop-zone" class="drop-zone">
-        <p class="drop-text">Drag & drop gambar ke sini<br>atau</p>
-        <button id="choose-btn" type="button">Choose File</button>
+      <!-- FILE INPUT + DRAG DROP -->
+      <div class="file-box">
+        <p class="center-title" id="pick-label">Pilih Gambar</p>
+
+        <div id="drop-zone" class="drop-zone keep-visible">
+          <p class="drop-text" id="drop-text">
+            Drag & drop gambar ke sini<br>atau
+          </p>
+          <button id="choose-btn" type="button">Choose File</button>
+        </div>
+
+        <button id="add-more-btn" class="add-more hidden" type="button">
+          + Tambah Gambar Lagi
+        </button>
+
+        <div id="file-chips" class="file-chips hidden"></div>
+
+        <p id="file-name">No file chosen</p>
+
+        <input type="file" id="upload" accept="image/*" multiple hidden>
       </div>
 
-      <!-- List file (muncul setelah ada file) -->
-      <div id="file-chips" class="file-chips hidden"></div>
+      <!-- KUALITAS -->
+      <div class="quality-box">
+        <div class="quality-top">
+          <label for="qualityRange" id="quality-label">Kualitas</label>
+          <input
+            type="number"
+            id="qualityNumber"
+            min="0.1"
+            max="1"
+            step="0.1"
+            value="0.8"
+          >
+        </div>
 
-      <!-- Ringkasan file -->
-      <p id="file-name">No file chosen</p>
-
-      <!-- input asli disembunyikan, bisa multi-file -->
-      <input type="file" id="upload" accept="image/*" multiple hidden>
-    </div>
-
-    <!-- KUALITAS -->
-    <div class="quality-box">
-      <div class="quality-top">
-        <label for="qualityRange">Kualitas</label>
         <input
-          type="number"
-          id="qualityNumber"
+          type="range"
           min="0.1"
           max="1"
           step="0.1"
           value="0.8"
+          id="qualityRange"
         >
       </div>
 
-      <input
-        type="range"
-        min="0.1"
-        max="1"
-        step="0.1"
-        value="0.8"
-        id="qualityRange"
-      >
+      <!-- UKURAN FILE LIST -->
+      <div class="info-box">
+        <p id="size-title">Ukuran file:</p>
+        <div id="size-list" class="size-list"></div>
+      </div>
+
+      <!-- BUTTON -->
+      <div class="footer-btn">
+        <button id="compress-btn" type="button">Kompres</button>
+        <button id="reset-btn" type="button">Reset</button>
+      </div>
+
     </div>
 
-    <!-- INFO UKURAN -->
-    <div class="info-box">
-      <p>Ukuran sebelum: <span id="beforeSize">-</span></p>
-      <p>Ukuran sesudah: <span id="afterSize">-</span></p>
+    <h3 id="result-title">Hasil Kompres:</h3>
+    <img id="preview">
+
+    <div class="download-wrapper">
+      <a id="download" class="download-btn hidden">Download File</a>
     </div>
 
-    <!-- TOMBOL -->
-    <div class="footer-btn">
-      <button id="compress-btn" type="button">Kompres</button>
-      <button id="reset-btn" type="button">Reset</button>
+    <!-- FOOTER -->
+    <div class="footer">
+      <p>Created by: <b>Osep Cino</b>, <b>Abdi Ninja</b>, <b>Okan Kunci T</b></p>
+      <p>
+        ☕ Support us:
+        <a href="https://saweria.co/yhendraji95" target="_blank">
+          https://saweria.co/yhendraji95
+        </a>
+      </p>
     </div>
-
   </div>
 
-  <h3>Hasil Kompres:</h3>
-  <img id="preview">
-
-  <div class="download-wrapper">
-    <a id="download" class="download-btn hidden">Download File</a>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <p>Created by: <b>Osep Cino</b>, <b>Abdi Ninja</b>, <b>Okan Kunci T</b></p>
-    <p>
-      ☕ Support us:
-      <a href="https://saweria.co/yhendraji95" target="_blank">
-        https://saweria.co/yhendraji95
-      </a>
-    </p>
-  </div>
-
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>

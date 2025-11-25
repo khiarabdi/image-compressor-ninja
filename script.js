@@ -1,265 +1,339 @@
-const range       = document.getElementById("qualityRange");
-const number      = document.getElementById("qualityNumber");
-const toggleBtn   = document.getElementById("toggle-theme");
-const beforeSize  = document.getElementById("beforeSize");
-const afterSize   = document.getElementById("afterSize");
+// ELEMENTS
 const uploadInput = document.getElementById("upload");
-const fileNameEl  = document.getElementById("file-name");
-const preview     = document.getElementById("preview");
-const downloadEl  = document.getElementById("download");
+const dropZone    = document.getElementById("drop-zone");
 const chooseBtn   = document.getElementById("choose-btn");
+const addMoreBtn  = document.getElementById("add-more-btn");
+const fileNameEl  = document.getElementById("file-name");
+const fileChipsEl = document.getElementById("file-chips");
+const sizeListEl  = document.getElementById("size-list");
 const compressBtn = document.getElementById("compress-btn");
 const resetBtn    = document.getElementById("reset-btn");
-const dropZone    = document.getElementById("drop-zone");
-const fileChipsEl = document.getElementById("file-chips");
+const preview     = document.getElementById("preview");
+const downloadEl  = document.getElementById("download");
+const range       = document.getElementById("qualityRange");
+const numberInput = document.getElementById("qualityNumber");
+const toggleTheme = document.getElementById("toggle-theme");
+const langButtons = document.querySelectorAll(".lang-btn");
+
+// UI text elements for i18n
+const titleText   = document.getElementById("title-text");
+const subtitleText= document.getElementById("subtitle-text");
+const pickLabel   = document.getElementById("pick-label");
+const dropText    = document.getElementById("drop-text");
+const qualityLabel= document.getElementById("quality-label");
+const sizeTitle   = document.getElementById("size-title");
+const resultTitle = document.getElementById("result-title");
 
 let files = [];
-let currentIndex = null;
+let currentLang = "id";
+let compressedResults = [];     // semua hasil kompres disimpan di sini
+let previewContainer = null;   // container thumbnail preview
 
-// cegah browser buka file di tab
-["dragover", "drop"].forEach(eventName => {
-  window.addEventListener(eventName, (e) => e.preventDefault());
-});
-
-/* ========== FILE INPUT & DROP ========== */
-
-chooseBtn.addEventListener("click", () => uploadInput.click());
-
-uploadInput.addEventListener("change", () => {
-  const newFiles = Array.from(uploadInput.files).filter(f => f.type.startsWith("image/"));
-  addFiles(newFiles);
-});
-
-dropZone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  dropZone.classList.add("dragover");
-});
-
-dropZone.addEventListener("dragleave", () => {
-  dropZone.classList.remove("dragover");
-});
-
-dropZone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  dropZone.classList.remove("dragover");
-
-  const newFiles = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith("image/"));
-  addFiles(newFiles);
-});
-
-/* ========== ADD FILES ========== */
-
-function addFiles(newFiles) {
-  if (!newFiles.length) {
-    alert("Harap masukkan file gambar (jpg/png/webp dll)");
-    return;
+/* ======= i18n TEXTS ======= */
+const i18n = {
+  id: {
+    title: "Image Compressor Sederhana",
+    subtitle: "Upload gambar, atur kualitas, lalu kompres & download.",
+    pickLabel: "Pilih Gambar",
+    dropText: "Drag & drop gambar ke sini<br>atau",
+    chooseFile: "Pilih File",
+    addMore: "+ Tambah Gambar Lagi",
+    quality: "Kualitas",
+    sizeTitle: "Ukuran file:",
+    resultTitle: "Hasil Kompres:",
+    compress: "Kompres",
+    reset: "Reset",
+    download: "Download Semua File",
+    noFile: "Belum ada file",
+    alertNoImage: "Harap masukkan gambar terlebih dahulu (jpg/png/dll).",
+    alertDoneMulti: "Semua file berhasil dikompres!"
+  },
+  en: {
+    title: "Simple Image Compressor",
+    subtitle: "Upload images, set quality, then compress & download.",
+    pickLabel: "Select Image",
+    dropText: "Drag & drop images here<br>or",
+    chooseFile: "Choose File",
+    addMore: "+ Add More Images",
+    quality: "Quality",
+    sizeTitle: "File sizes:",
+    resultTitle: "Compression Result:",
+    compress: "Compress",
+    reset: "Reset",
+    download: "Download All File",
+    noFile: "No file chosen",
+    alertNoImage: "Please add image files first (jpg/png/etc).",
+    alertDoneMulti: "All files have been compressed!"
   }
+};
 
-  files = [...files, ...newFiles];
-  currentIndex = files.length - 1; // terakhir jadi aktif
+function setLanguage(lang) {
+  currentLang = lang;
+  const t = i18n[lang];
 
-  renderFileChips();
+  titleText.textContent    = t.title;
+  subtitleText.textContent = t.subtitle;
+  pickLabel.textContent    = t.pickLabel;
+  dropText.innerHTML       = t.dropText;
+  chooseBtn.textContent    = t.chooseFile;
+  addMoreBtn.textContent   = t.addMore;
+  qualityLabel.textContent = t.quality;
+  sizeTitle.textContent    = t.sizeTitle;
+  resultTitle.textContent  = t.resultTitle;
+  compressBtn.textContent  = t.compress;
+  resetBtn.textContent     = t.reset;
+  downloadEl.textContent   = t.download;
 
-  if (files.length === 1) {
-    fileNameEl.textContent = files[0].name;
-  } else {
-    fileNameEl.textContent = `${files.length} file terpilih (aktif: ${files[currentIndex].name})`;
-  }
+  if (!files.length) fileNameEl.textContent = t.noFile;
 
-  dropZone.classList.add("hidden");
-  fileChipsEl.classList.remove("hidden");
-}
-
-/* ========== FILE LIST / CHIPS ========== */
-
-function renderFileChips() {
-  fileChipsEl.innerHTML = "";
-
-  files.forEach((file, index) => {
-    const chip = document.createElement("div");
-    chip.className = "file-chip";
-    chip.textContent = file.name;
-
-    if (index === currentIndex) {
-      chip.style.borderColor = "#00c853";
-      chip.style.fontWeight = "bold";
-    }
-
-    // klik chip = pilih file aktif
-    chip.onclick = () => {
-      currentIndex = index;
-      fileNameEl.textContent = `${files.length} file terpilih (aktif: ${file.name})`;
-      renderFileChips();
-    };
-
-    fileChipsEl.appendChild(chip);
+  langButtons.forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.lang === lang);
   });
 }
 
-/* ========== SLIDER ========== */
+langButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    setLanguage(btn.dataset.lang);
+  });
+});
 
-function updateSliderBackground() {
-  const min = parseFloat(range.min) || 0;
-  const max = parseFloat(range.max) || 1;
-  const val = ((parseFloat(range.value) - min) / (max - min)) * 100;
+/* ======= THEME TOGGLE ======= */
+toggleTheme.addEventListener("click", () => {
+  document.body.classList.toggle("light");
+  document.body.classList.toggle("dark");
 
-  const baseColor = document.body.classList.contains("light")
-    ? "#ddd"
-    : "#2c2c2c";
+  toggleTheme.textContent = document.body.classList.contains("dark")
+    ? "Light Mode"
+    : "Dark Mode";
+});
 
-  range.style.background = `linear-gradient(to right,
-    #007bff 0%,
-    #007bff ${val}%,
-    ${baseColor} ${val}%,
-    ${baseColor} 100%)`;
+/* ======= PREVENT DEFAULT WINDOW DRAG ======= */
+["dragover", "drop"].forEach(event =>
+  window.addEventListener(event, e => e.preventDefault())
+);
+
+/* ======= FILE HANDLING ======= */
+chooseBtn.onclick = () => uploadInput.click();
+addMoreBtn.onclick = () => uploadInput.click();
+
+uploadInput.onchange = () => {
+  addFiles([...uploadInput.files]);
+};
+
+dropZone.ondragover = (e) => {
+  e.preventDefault();
+  dropZone.classList.add("dragover");
+};
+
+dropZone.ondragleave = () => {
+  dropZone.classList.remove("dragover");
+};
+
+dropZone.ondrop = (e) => {
+  e.preventDefault();
+  dropZone.classList.remove("dragover");
+  const newFiles = getFilesFromDataTransfer(e.dataTransfer);
+  addFiles(newFiles);
+};
+
+function getFilesFromDataTransfer(dt) {
+  const result = [];
+  if (dt.items && dt.items.length) {
+    for (let i = 0; i < dt.items.length; i++) {
+      const item = dt.items[i];
+      if (item.kind === "file") {
+        const file = item.getAsFile();
+        if (file && file.type.startsWith("image/")) result.push(file);
+      }
+    }
+  } else if (dt.files && dt.files.length) {
+    for (let i = 0; i < dt.files.length; i++) {
+      const file = dt.files[i];
+      if (file.type.startsWith("image/")) result.push(file);
+    }
+  }
+  return result;
 }
 
-range.addEventListener("input", () => {
-  number.value = range.value;
-  updateSliderBackground();
-});
+function addFiles(newFiles) {
+  newFiles.forEach(f => {
+    if (f.type.startsWith("image/")) files.push(f);
+  });
 
-number.addEventListener("input", () => {
-  if (number.value >= 0.1 && number.value <= 1) {
-    range.value = number.value;
-    updateSliderBackground();
-  }
-});
+  if (!files.length) return;
 
-/* ========== SIZE FORMAT ========== */
+  fileNameEl.textContent = `${files.length} file terpilih`;
+  addMoreBtn.classList.remove("hidden");
+  fileChipsEl.classList.remove("hidden");
 
+  renderFileList();
+}
+
+function renderFileList() {
+  fileChipsEl.innerHTML = "";
+  files.forEach(file => {
+    const div = document.createElement("div");
+    div.className = "file-chip";
+    div.textContent = file.name;
+    fileChipsEl.appendChild(div);
+  });
+}
+
+/* ======= SIZE FORMAT ======= */
 function formatSize(bytes) {
   if (bytes < 1024) return bytes + " B";
   if (bytes < 1048576) return (bytes / 1024).toFixed(2) + " KB";
   return (bytes / 1048576).toFixed(2) + " MB";
 }
 
-/* ========== COMPRESS SINGLE ========== */
+/* ======= COMPRESS LOGIC ======= */
+/* ======= COMPRESS LOGIC ======= */
+compressBtn.onclick = async () => {
+  if (!files.length) {
+    alert(i18n[currentLang].alertNoImage);
+    return;
+  }
+
+  sizeListEl.innerHTML = "";
+  compressedResults = [];
+
+  // siapkan container preview banyak
+  if (!previewContainer) {
+    previewContainer = document.getElementById("preview-container");
+    if (!previewContainer) {
+      previewContainer = document.createElement("div");
+      previewContainer.id = "preview-container";
+      preview.insertAdjacentElement("afterend", previewContainer);
+    }
+  }
+  preview.style.display = "none";
+  preview.src = "";
+  previewContainer.innerHTML = "";
+
+  // sembunyikan dulu tombol download all
+  downloadEl.classList.add("hidden");
+  downloadEl.removeAttribute("href");
+
+  for (const file of files) {
+    const { blob, url } = await compressSingle(file);
+    const before = formatSize(file.size);
+    const after  = formatSize(blob.size);
+
+    const item = document.createElement("div");
+    item.className = "size-item";
+    item.textContent = `${file.name}: ${before} → ${after}`;
+    sizeListEl.appendChild(item);
+
+    // simpan untuk tombol download all
+    compressedResults.push({ name: file.name, url });
+
+    /* ==============================
+       PREVIEW + DOWNLOAD PER FILE
+    ============================== */
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "preview-item";
+
+    const img = document.createElement("img");
+    img.src = url;
+    img.className = "preview-thumb";
+
+    const btn = document.createElement("a");
+    btn.className = "download-single";
+    btn.textContent = "Download";
+    btn.href = url;
+    btn.download = "compressed_" + file.name;
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(btn);
+    previewContainer.appendChild(wrapper);
+
+    await new Promise(r => setTimeout(r, 200));
+  }
+
+  // tampilkan tombol download all jika ada hasil
+  if (compressedResults.length > 0) {
+    downloadEl.classList.remove("hidden");
+    downloadEl.href = "#";
+  }
+
+};
 
 function compressSingle(file) {
   return new Promise((resolve) => {
-    const quality = parseFloat(range.value);
-
+    const q = parseFloat(range.value);
     const reader = new FileReader();
-    reader.onload = function (e) {
+
+    reader.onload = (e) => {
       const img = new Image();
       img.src = e.target.result;
 
-      img.onload = function () {
+      img.onload = () => {
         const canvas = document.createElement("canvas");
         canvas.width = img.width;
         canvas.height = img.height;
-
         const ctx = canvas.getContext("2d");
         ctx.drawImage(img, 0, 0);
 
         canvas.toBlob((blob) => {
           const url = URL.createObjectURL(blob);
-          resolve({ blob, url, name: file.name });
-        }, "image/jpeg", quality);
+          resolve({ blob, url });
+        }, "image/jpeg", q);
       };
     };
+
     reader.readAsDataURL(file);
   });
 }
 
-/* ========== COMPRESS BUTTON ========== */
+/* ======= DOWNLOAD SEMUA FILE ======= */
+downloadEl.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (!compressedResults.length) return;
 
-async function compress() {
-  if (!files.length) {
-    alert("Silakan pilih atau drop gambar terlebih dahulu.");
-    return;
-  }
+  compressedResults.forEach(({ name, url }) => {
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "compressed_" + name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
+});
 
-  // 👉 kalau cuma 1 file
-  if (files.length === 1) {
-    const file = files[0];
 
-    beforeSize.textContent = formatSize(file.size);
-
-    const { blob, url } = await compressSingle(file);
-
-    afterSize.textContent = formatSize(blob.size);
-
-    preview.src = url;
-    preview.style.display = "block";
-
-    downloadEl.href = url;
-    downloadEl.download = "compressed_" + file.name;
-    downloadEl.classList.remove("hidden");
-
-    return;
-  }
-
-  // 👉 MULTI FILE MODE
-  alert("Banyak file terdeteksi. Akan dikompres & didownload satu per satu.");
-
-  for (let i = 0; i < files.length; i++) {
-    const file = files[i];
-
-    beforeSize.textContent = formatSize(file.size);
-
-    const { blob, url, name } = await compressSingle(file);
-
-    afterSize.textContent = formatSize(blob.size);
-
-    // auto-download
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "compressed_" + name;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    await new Promise(r => setTimeout(r, 600)); // delay biar ga spam browser
-  }
-
-  alert("Semua file berhasil dikompres!");
-}
-
-/* ========== RESET ========== */
-
-function resetAll() {
+/* ======= RESET ======= */
+resetBtn.onclick = () => {
   files = [];
-  currentIndex = null;
-
+  compressedResults = [];
   uploadInput.value = "";
-  fileNameEl.textContent = "No file chosen";
+  fileNameEl.textContent = i18n[currentLang].noFile;
   fileChipsEl.innerHTML = "";
   fileChipsEl.classList.add("hidden");
-
-  dropZone.classList.remove("hidden");
+  addMoreBtn.classList.add("hidden");
+  sizeListEl.innerHTML = "";
 
   preview.style.display = "none";
   preview.src = "";
 
+  if (previewContainer) {
+    previewContainer.innerHTML = "";
+  }
+
   downloadEl.classList.add("hidden");
   downloadEl.removeAttribute("href");
+  downloadEl.removeAttribute("download");
+};
 
-  beforeSize.textContent = "-";
-  afterSize.textContent = "-";
-
-  range.value = 0.8;
-  number.value = 0.8;
-  updateSliderBackground();
-}
-
-/* ========== TOGGLE MODE ========== */
-
-toggleBtn.addEventListener("click", () => {
-  document.body.classList.toggle("light");
-  document.body.classList.toggle("dark");
-
-  toggleBtn.textContent = document.body.classList.contains("dark")
-    ? "Light Mode"
-    : "Dark Mode";
-
-  updateSliderBackground();
+/* ======= SYNC RANGE & NUMBER ======= */
+range.addEventListener("input", () => {
+  numberInput.value = range.value;
 });
 
-/* ========== EVENTS ========== */
+numberInput.addEventListener("input", () => {
+  const v = parseFloat(numberInput.value);
+  if (v >= 0.1 && v <= 1) range.value = v;
+});
 
-compressBtn.addEventListener("click", compress);
-resetBtn.addEventListener("click", resetAll);
-
-updateSliderBackground();
+/* INIT */
+setLanguage("id");
