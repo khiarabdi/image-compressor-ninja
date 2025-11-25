@@ -13,6 +13,14 @@ const compressBtn = document.getElementById("compress-btn");
 const resetBtn    = document.getElementById("reset-btn");
 const dropZone    = document.getElementById("drop-zone");
 
+// Cegah browser buka file saat drag & drop di luar drop-zone
+["dragover", "drop"].forEach(eventName => {
+  window.addEventListener(eventName, (e) => {
+    e.preventDefault();
+  });
+});
+
+
 // file yang sedang dipakai (pilih / drag-drop)
 let currentFile = null;
 
