@@ -218,6 +218,22 @@ body.light .card {
   gap: 6px;
 }
 
+.format-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#formatSelect {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  color: #222;
+  font-size: 13px;
+}
+
+
 .quality-top {
   display: flex;
   justify-content: space-between;
